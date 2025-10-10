@@ -1,0 +1,19 @@
+console.log("Hola Mundo");
+
+import express from "express";
+import dotenv from "dotenv";
+import connectDB from "./db/config.js";
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+connectDB();
+
+app.get("/", (req, res) => {
+  res.send("Hola Mundo");
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en el puerto ${PORT}`);
+});
