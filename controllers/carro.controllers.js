@@ -33,11 +33,10 @@ export async function buscarCarroId(req, res) {
     const carroEncontrado = await findCarById(req.params.id);
     res.status(200).json({
       message: `la peticion se ejecuto exitosamente`,
-
       car: carroEncontrado
     });
   } catch (error) {
-     res.status(500).json({
+    res.status(500).json({
       message: `error al tratar de encontrar carro indicado con el id: ${req.params.id}`,
     });
   }
