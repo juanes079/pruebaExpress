@@ -1,7 +1,10 @@
 import express from "express";
-import { obtenerCarros,crearCarro, buscarCarroId } from "../controllers/carro.controllers.js";
+import { obtenerCarros,crearCarro, buscarCarroId, eliminarCarros,eliminarCarro, actualizarCarro } from "../controllers/carro.controllers.js";
 const router = express.Router();
 router.get("/", obtenerCarros);
 router.post("/createCar", crearCarro);
 router.get("/:id", buscarCarroId);
+router.delete("/deleteAllCars", eliminarCarros );
+router.delete("/delete-Car/:id", eliminarCarro );
+router.patch("/update-Car/:id", actualizarCarro );
 export default router;
