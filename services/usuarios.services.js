@@ -1,4 +1,5 @@
 import UsuarioModels from "../models/Usuario.js";
+import bcrypt from "bcryptjs";
 
 /* servicio para obtener todos los usuarios */
 export async function getUsuarios() {
@@ -14,10 +15,13 @@ export async function createUsuario(usuarioGuardar) {
   const { email, password } = usuarioGuardar;
   try {
     const usuarioExistente = await UsuarioModels.findOne({ email });
+
     if (usuarioExistente) {
       return `ya existe un usuario con el email: ${email}`;
     }
-    const newUsuario = UsuarioModels.create({ email, password });
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt)
+    const newUsuario = UsuarioModels.create({ email, password:hashPassword });
     return newUsuario;
   } catch (error) {
     throw new Error("Error al crear nuevo usuario " + error.message);
