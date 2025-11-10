@@ -5,6 +5,7 @@ import {
   deleteUsers,
   deleteOner,
   updateUser,
+  logIn,
 } from "../services/usuarios.services.js";
 
 export async function obtenerUsuarios(req, res) {
@@ -72,4 +73,20 @@ export async function actualizarUsuario(req, res) {
   } catch (error) {res.status(500).json({
       message: `error al tratar de actualizar el usuario ${error.message}`,
     });}
+}
+
+
+export async function logInUser(req, res){
+  try {
+      const userData = req.body;
+      const saveToken = await logIn(userData);
+      res.status(200).json({
+        message:"token asignado",
+        token:saveToken
+      });
+  } catch (error) {res.status(500).json({
+      message: `error al tratar de entrar al sistema ${error.message}`,
+    });
+    
+  }
 }
