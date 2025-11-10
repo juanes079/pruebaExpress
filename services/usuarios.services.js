@@ -1,5 +1,6 @@
 import UsuarioModels from "../models/Usuario.js";
 import bcrypt from "bcryptjs";
+import generateToken from "../middlewares/jwtGenerate.js";
 
 /* servicio para obtener todos los usuarios */
 export async function getUsuarios() {
@@ -20,8 +21,8 @@ export async function createUsuario(usuarioGuardar) {
       return `ya existe un usuario con el email: ${email}`;
     }
     const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt)
-    const newUsuario = UsuarioModels.create({ email, password:hashPassword });
+    const hashPassword = await bcrypt.hash(password, salt);
+    const newUsuario = UsuarioModels.create({ email, password: hashPassword });
     return newUsuario;
   } catch (error) {
     throw new Error("Error al crear nuevo usuario " + error.message);
@@ -76,12 +77,35 @@ export async function updateUser(idUsuario, usuarioData) {
       userUpDate.email = usuarioData.email || userUpDate.email;
       userUpDate.password = usuarioData.password || userUpDate.password;
       await userUpDate.save();
-      return `el usuario: ${userUpDate} se actualizo`
+      return `el usuario: ${userUpDate} se actualizo`;
     }
-    return `el usuario con el id:${idUsuario} no existe en la base de datos `
+    return `el usuario con el id:${idUsuario} no existe en la base de datos `;
   } catch (error) {
     throw new Error(
       "Error al actualizar el usuario en la base de datos " + error.message
+    );
+  }
+}
+
+export async function logIn(user) {
+  const { email, password } = user;
+  try {
+    const usuarioExistente = await UsuarioModels.findOne({ email });
+    if (!usuarioExistente) {
+      return `no existen registros de usuarios con el email : ${email}  registrate`;
+    };
+    const validPassword = await bcrypt.compare(
+      password,
+      usuarioExistente.password
+    );
+    if (!validPassword) {
+      return `credenciales invalidas `;
+    }
+    const tokenAssigned = generateToken({ email });
+    return tokenAssigned;
+  } catch (error) {
+    throw new Error(
+      "Error al ejecutar el logIn " + error.message
     );
   }
 }
